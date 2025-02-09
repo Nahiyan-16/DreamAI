@@ -4,6 +4,7 @@ import { OpenAI } from "openai";
 import { useFonts } from 'expo-font';
 import { ActivityIndicator } from "react-native";
 import LottieView from 'lottie-react-native';
+import { OPENAI_API_KEY } from '@env';
 
 const DreamInterpreter = () => {
   const [dreamText, setDreamText] = useState("");
@@ -23,7 +24,7 @@ const DreamInterpreter = () => {
     setLoading(true);
 
     try {
-      const openai = new OpenAI({ apiKey: "YOUR_OPENAI_API_KEY" });
+      const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
       const response = await openai.chat.completions.create({
         model: "gpt-4",
         messages: [{ role: "system", content: "Analyze the following dream and provide an interpretation." }, { role: "user", content: dreamText }],
@@ -80,17 +81,16 @@ const DreamInterpreter = () => {
         />
       )}
       
-      {!interpretation && (
+      {interpretation && (
         <View style={{ marginTop: 20, padding: 15, backgroundColor: "#FFFFFF", borderRadius: 10 }}>
           <Text style={{ fontSize: 18, fontWeight: "bold", fontFamily: "Poppins-Regular", color: "#6A5ACD" }}>Interpretation:</Text>
-          {/* <Text style={{ fontSize: 16, fontFamily: "Poppins-Regular", color: "#333" }}>{interpretation}</Text> */}
-          <Text style={{ fontSize: 16, fontFamily: "Poppins-Regular", color: "#333" }}>
+          <Text style={{ fontSize: 16, fontFamily: "Poppins-Regular", color: "#333" }}>{interpretation}</Text>
+          {/* <Text style={{ fontSize: 16, fontFamily: "Poppins-Regular", color: "#333" }}>
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim minus excepturi laudantium consequuntur quasi, ab itaque praesentium expedita reprehenderit harum commodi beatae eos laboriosam, dolore sed aliquam, voluptates perspiciatis atque?
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim minus excepturi laudantium consequuntur quasi, ab itaque praesentium expedita reprehenderit harum commodi beatae eos laboriosam, dolore sed aliquam, voluptates perspiciatis atque?  
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim minus excepturi laudantium consequuntur quasi, ab itaque praesentium expedita reprehenderit harum commodi beatae eos laboriosam, dolore sed aliquam, voluptates perspiciatis atque?
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim minus excepturi laudantium consequuntur quasi, ab itaque praesentium expedita reprehenderit harum commodi beatae eos laboriosam, dolore sed aliquam, voluptates perspiciatis atque?
-
-          </Text>
+          </Text> */}
         </View>
 
       )}
