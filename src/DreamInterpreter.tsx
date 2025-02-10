@@ -41,13 +41,6 @@ const DreamInterpreter = () => {
 
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 20, backgroundColor: "#F8F8F8" }}>
-      <View style={{ alignItems: "center", marginBottom: 20 }}>
-        <Image source={require("../assets/logo.png")} style={{ width: 80, height: 80, marginBottom: 10 }} />
-        <Text style={{ fontSize: 26, fontWeight: "bold", fontFamily: "Poppins-Regular", color: "#6A5ACD" }}>
-          AI Dream Interpreter
-        </Text>
-      </View>
-      
       <TextInput
         placeholder="Describe your dream..."
         value={dreamText}
