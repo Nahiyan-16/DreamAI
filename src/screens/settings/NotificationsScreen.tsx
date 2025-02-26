@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Switch, ScrollView } from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
+import SettingsHeader from '../../components/SettingsHeader';
 
 const NotificationsScreen = () => {
   const { theme } = useTheme();
@@ -18,7 +19,9 @@ const NotificationsScreen = () => {
     container: {
       flex: 1,
       backgroundColor: isDarkMode ? '#1a1a1a' : '#F8F8F8',
-      paddingTop: 20,
+    },
+    content: {
+      paddingTop: 60,
     },
     section: {
       marginBottom: 20,
@@ -65,85 +68,88 @@ const NotificationsScreen = () => {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Dream Tracking</Text>
-        <View style={styles.option}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.optionText}>Dream Reminders</Text>
-            <Text style={styles.optionDescription}>
-              Daily reminders to record your dreams
-            </Text>
+    <View style={styles.container}>
+      <SettingsHeader destination="Settings" />
+      <ScrollView style={styles.content}>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Dream Tracking</Text>
+          <View style={styles.option}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.optionText}>Dream Reminders</Text>
+              <Text style={styles.optionDescription}>
+                Daily reminders to record your dreams
+              </Text>
+            </View>
+            <Switch
+              value={notifications.dreamReminders}
+              onValueChange={() => toggleSwitch('dreamReminders')}
+              trackColor={{ false: '#767577', true: '#81b0ff' }}
+              thumbColor={notifications.dreamReminders ? '#6A5ACD' : '#f4f3f4'}
+            />
           </View>
-          <Switch
-            value={notifications.dreamReminders}
-            onValueChange={() => toggleSwitch('dreamReminders')}
-            trackColor={{ false: '#767577', true: '#81b0ff' }}
-            thumbColor={notifications.dreamReminders ? '#6A5ACD' : '#f4f3f4'}
-          />
-        </View>
-        <View style={styles.option}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.optionText}>Pattern Alerts</Text>
-            <Text style={styles.optionDescription}>
-              Get notified when recurring dream patterns are detected
-            </Text>
+          <View style={styles.option}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.optionText}>Pattern Alerts</Text>
+              <Text style={styles.optionDescription}>
+                Get notified when recurring dream patterns are detected
+              </Text>
+            </View>
+            <Switch
+              value={notifications.patternAlerts}
+              onValueChange={() => toggleSwitch('patternAlerts')}
+              trackColor={{ false: '#767577', true: '#81b0ff' }}
+              thumbColor={notifications.patternAlerts ? '#6A5ACD' : '#f4f3f4'}
+            />
           </View>
-          <Switch
-            value={notifications.patternAlerts}
-            onValueChange={() => toggleSwitch('patternAlerts')}
-            trackColor={{ false: '#767577', true: '#81b0ff' }}
-            thumbColor={notifications.patternAlerts ? '#6A5ACD' : '#f4f3f4'}
-          />
-        </View>
-        <View style={[styles.option, styles.lastOption]}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.optionText}>Weekly Insights</Text>
-            <Text style={styles.optionDescription}>
-              Receive weekly summaries of your dream patterns and interpretations
-            </Text>
+          <View style={[styles.option, styles.lastOption]}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.optionText}>Weekly Insights</Text>
+              <Text style={styles.optionDescription}>
+                Receive weekly summaries of your dream patterns and interpretations
+              </Text>
+            </View>
+            <Switch
+              value={notifications.weeklyInsights}
+              onValueChange={() => toggleSwitch('weeklyInsights')}
+              trackColor={{ false: '#767577', true: '#81b0ff' }}
+              thumbColor={notifications.weeklyInsights ? '#6A5ACD' : '#f4f3f4'}
+            />
           </View>
-          <Switch
-            value={notifications.weeklyInsights}
-            onValueChange={() => toggleSwitch('weeklyInsights')}
-            trackColor={{ false: '#767577', true: '#81b0ff' }}
-            thumbColor={notifications.weeklyInsights ? '#6A5ACD' : '#f4f3f4'}
-          />
         </View>
-      </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Notification Settings</Text>
-        <View style={styles.option}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.optionText}>Sound</Text>
-            <Text style={styles.optionDescription}>
-              Play sound for notifications
-            </Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Notification Settings</Text>
+          <View style={styles.option}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.optionText}>Sound</Text>
+              <Text style={styles.optionDescription}>
+                Play sound for notifications
+              </Text>
+            </View>
+            <Switch
+              value={notifications.soundEnabled}
+              onValueChange={() => toggleSwitch('soundEnabled')}
+              trackColor={{ false: '#767577', true: '#81b0ff' }}
+              thumbColor={notifications.soundEnabled ? '#6A5ACD' : '#f4f3f4'}
+            />
           </View>
-          <Switch
-            value={notifications.soundEnabled}
-            onValueChange={() => toggleSwitch('soundEnabled')}
-            trackColor={{ false: '#767577', true: '#81b0ff' }}
-            thumbColor={notifications.soundEnabled ? '#6A5ACD' : '#f4f3f4'}
-          />
-        </View>
-        <View style={[styles.option, styles.lastOption]}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.optionText}>Vibration</Text>
-            <Text style={styles.optionDescription}>
-              Vibrate when receiving notifications
-            </Text>
+          <View style={[styles.option, styles.lastOption]}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.optionText}>Vibration</Text>
+              <Text style={styles.optionDescription}>
+                Vibrate when receiving notifications
+              </Text>
+            </View>
+            <Switch
+              value={notifications.vibrationEnabled}
+              onValueChange={() => toggleSwitch('vibrationEnabled')}
+              trackColor={{ false: '#767577', true: '#81b0ff' }}
+              thumbColor={notifications.vibrationEnabled ? '#6A5ACD' : '#f4f3f4'}
+            />
           </View>
-          <Switch
-            value={notifications.vibrationEnabled}
-            onValueChange={() => toggleSwitch('vibrationEnabled')}
-            trackColor={{ false: '#767577', true: '#81b0ff' }}
-            thumbColor={notifications.vibrationEnabled ? '#6A5ACD' : '#f4f3f4'}
-          />
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 };
 

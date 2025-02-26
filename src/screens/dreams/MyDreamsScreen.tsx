@@ -1,18 +1,59 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator, TextInput, Platform } from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
-import { useDreams, Dream } from '../../context/DreamsContext';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RouteProp } from '@react-navigation/native';
+
+// Mocking the useDreams hook
+const useDreams = () => {
+  return {
+    dreams: [
+      {
+        id: '1',
+        date: '2023-10-01',
+        description: 'I was flying over the mountains.',
+        interpretation: 'Flying often represents freedom and escape.',
+      },
+      {
+        id: '2',
+        date: '2023-10-02',
+        description: 'I lost my wallet in a crowded market.',
+        interpretation: 'Losing something can indicate feelings of insecurity.',
+      },
+      {
+        id: '3',
+        date: '2023-10-03',
+        description: 'I was chased by a giant spider.',
+        interpretation: 'Being chased can symbolize avoidance of a situation.',
+      },
+    ],
+    deleteDream: (id: string) => {
+      console.log(`Dream with id ${id} deleted.`);
+    },
+    loading: false,
+  };
+};
 
 type SortOption = 'newest' | 'oldest';
+
+// Define your navigation parameters
+type RootStackParamList = {
+  SignIn: undefined; // Define the parameters for SignIn
+  SignUp: undefined; // Define the parameters for SignUp
+  // Add other routes here if necessary
+};
 
 const MyDreamsScreen = () => {
   const { theme } = useTheme();
   const isDarkMode = theme === 'dark';
-  const { dreams, deleteDream, loading } = useDreams();
+  const { dreams, deleteDream, loading } = useDreams(); // Use the mocked hook
   const [expandedDream, setExpandedDream] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOrder, setSortOrder] = useState<SortOption>('newest');
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  const isLoggedIn = true; // Set to true for testing
 
   const styles = StyleSheet.create({
     container: {
@@ -103,6 +144,27 @@ const MyDreamsScreen = () => {
     },
     activeSort: {
       color: '#6A5ACD',
+    },
+    signInButton: {
+      backgroundColor: '#6A5ACD',
+      paddingVertical: 12,
+      paddingHorizontal: 30,
+      borderRadius: 25,
+      marginTop: 20,
+      marginBottom: 10,
+    },
+    signInButtonText: {
+      color: '#FFFFFF',
+      fontSize: 18,
+      fontWeight: 'bold',
+    },
+    signUpButton: {
+      paddingVertical: 12,
+      paddingHorizontal: 30,
+    },
+    signUpButtonText: {
+      color: '#6A5ACD',
+      fontSize: 16,
     },
   });
 
@@ -201,6 +263,33 @@ const MyDreamsScreen = () => {
     return (
       <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
         <ActivityIndicator size="large" color="#6A5ACD" />
+      </View>
+    );
+  }
+
+  if (!isLoggedIn) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Ionicons 
+          name="moon-outline" 
+          size={64} 
+          color={isDarkMode ? '#B0B0B0' : '#666666'} 
+        />
+        <Text style={styles.emptyText}>
+          Sign in to save and view your dream interpretations
+        </Text>
+        <TouchableOpacity 
+          style={styles.signInButton}
+          onPress={() => navigation.navigate('SignIn')}
+        >
+          <Text style={styles.signInButtonText}>Sign In</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.signUpButton}
+          onPress={() => navigation.navigate('SignUp')}
+        >
+          <Text style={styles.signUpButtonText}>Create Account</Text>
+        </TouchableOpacity>
       </View>
     );
   }

@@ -11,6 +11,9 @@ import ChangePasswordScreen from '../screens/settings/ChangePasswordScreen';
 import PrivacySettingsScreen from '../screens/settings/PrivacySettingsScreen';
 import TermsOfServiceScreen from '../screens/settings/TermsOfServiceScreen';
 import PrivacyPolicyScreen from '../screens/settings/PrivacyPolicyScreen';
+import SignInScreen from '../screens/auth/SignInScreen';
+import ForgotPasswordScreen from '../screens/auth/ForgotPasswordScreen';
+import SignUpScreen from '../screens/auth/SignUpScreen';
 import { Ionicons } from '@expo/vector-icons';
 import { DreamsProvider } from '../context/DreamsContext';
 
@@ -113,6 +116,30 @@ const DrawerNavigator = () => {
         options={{
           drawerItemStyle: { height: 0 }, // Hide from drawer menu
           title: 'Privacy Policy',
+        }}
+      />
+      <Drawer.Screen 
+        name="SignIn"
+        component={SignInScreen}
+        options={{
+          drawerItemStyle: { height: 0 }, // Hide from drawer menu
+          title: 'Sign In',
+        }}
+      />
+      <Drawer.Screen 
+        name="ForgotPassword"
+        component={ForgotPasswordScreen}
+        options={{
+          drawerItemStyle: { height: 0 }, // Hide from drawer menu
+          title: 'Forgot Password',
+        }}
+      />
+      <Drawer.Screen 
+        name="SignUp"
+        component={SignUpScreen}
+        options={{
+          drawerItemStyle: { height: 0 }, // Hide from drawer menu
+          title: 'Sign Up',
         }}
       />
     </Drawer.Navigator>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
+import SettingsHeader from '../../components/SettingsHeader';
 
 const ChangePasswordScreen = () => {
   const { theme } = useTheme();
@@ -119,97 +120,100 @@ const ChangePasswordScreen = () => {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.section}>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Current Password</Text>
-          <View style={styles.inputWrapper}>
-            <TextInput
-              style={styles.input}
-              secureTextEntry={!showCurrentPassword}
-              value={currentPassword}
-              onChangeText={setCurrentPassword}
-              placeholder="Enter current password"
-              placeholderTextColor={isDarkMode ? '#808080' : '#999999'}
-            />
-            <TouchableOpacity 
-              style={styles.toggleButton}
-              onPress={() => setShowCurrentPassword(!showCurrentPassword)}
-            >
-              <Ionicons 
-                name={showCurrentPassword ? 'eye-off' : 'eye'} 
-                size={24} 
-                color={isDarkMode ? '#FFFFFF' : '#333333'} 
+    <View style={styles.container}>
+      <SettingsHeader destination="Settings" />
+      <ScrollView style={{ ...styles.container, paddingTop: 60 }}>
+        <View style={styles.section}>
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Current Password</Text>
+            <View style={styles.inputWrapper}>
+              <TextInput
+                style={styles.input}
+                secureTextEntry={!showCurrentPassword}
+                value={currentPassword}
+                onChangeText={setCurrentPassword}
+                placeholder="Enter current password"
+                placeholderTextColor={isDarkMode ? '#808080' : '#999999'}
               />
-            </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.toggleButton}
+                onPress={() => setShowCurrentPassword(!showCurrentPassword)}
+              >
+                <Ionicons 
+                  name={showCurrentPassword ? 'eye-off' : 'eye'} 
+                  size={24} 
+                  color={isDarkMode ? '#FFFFFF' : '#333333'} 
+                />
+              </TouchableOpacity>
+            </View>
           </View>
+
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>New Password</Text>
+            <View style={styles.inputWrapper}>
+              <TextInput
+                style={styles.input}
+                secureTextEntry={!showNewPassword}
+                value={newPassword}
+                onChangeText={setNewPassword}
+                placeholder="Enter new password"
+                placeholderTextColor={isDarkMode ? '#808080' : '#999999'}
+              />
+              <TouchableOpacity 
+                style={styles.toggleButton}
+                onPress={() => setShowNewPassword(!showNewPassword)}
+              >
+                <Ionicons 
+                  name={showNewPassword ? 'eye-off' : 'eye'} 
+                  size={24} 
+                  color={isDarkMode ? '#FFFFFF' : '#333333'} 
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Confirm New Password</Text>
+            <View style={styles.inputWrapper}>
+              <TextInput
+                style={styles.input}
+                secureTextEntry={!showConfirmPassword}
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                placeholder="Confirm new password"
+                placeholderTextColor={isDarkMode ? '#808080' : '#999999'}
+              />
+              <TouchableOpacity 
+                style={styles.toggleButton}
+                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                <Ionicons 
+                  name={showConfirmPassword ? 'eye-off' : 'eye'} 
+                  size={24} 
+                  color={isDarkMode ? '#FFFFFF' : '#333333'} 
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <TouchableOpacity 
+            style={styles.button}
+            onPress={handleChangePassword}
+          >
+            <Text style={styles.buttonText}>Change Password</Text>
+          </TouchableOpacity>
         </View>
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>New Password</Text>
-          <View style={styles.inputWrapper}>
-            <TextInput
-              style={styles.input}
-              secureTextEntry={!showNewPassword}
-              value={newPassword}
-              onChangeText={setNewPassword}
-              placeholder="Enter new password"
-              placeholderTextColor={isDarkMode ? '#808080' : '#999999'}
-            />
-            <TouchableOpacity 
-              style={styles.toggleButton}
-              onPress={() => setShowNewPassword(!showNewPassword)}
-            >
-              <Ionicons 
-                name={showNewPassword ? 'eye-off' : 'eye'} 
-                size={24} 
-                color={isDarkMode ? '#FFFFFF' : '#333333'} 
-              />
-            </TouchableOpacity>
-          </View>
+        <View style={styles.requirements}>
+          <Text style={styles.requirementTitle}>Password Requirements</Text>
+          <Text style={styles.requirementText}>• Minimum 8 characters long</Text>
+          <Text style={styles.requirementText}>• At least one uppercase letter</Text>
+          <Text style={styles.requirementText}>• At least one lowercase letter</Text>
+          <Text style={styles.requirementText}>• At least one number</Text>
+          <Text style={styles.requirementText}>• At least one special character</Text>
         </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Confirm New Password</Text>
-          <View style={styles.inputWrapper}>
-            <TextInput
-              style={styles.input}
-              secureTextEntry={!showConfirmPassword}
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              placeholder="Confirm new password"
-              placeholderTextColor={isDarkMode ? '#808080' : '#999999'}
-            />
-            <TouchableOpacity 
-              style={styles.toggleButton}
-              onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-            >
-              <Ionicons 
-                name={showConfirmPassword ? 'eye-off' : 'eye'} 
-                size={24} 
-                color={isDarkMode ? '#FFFFFF' : '#333333'} 
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <TouchableOpacity 
-          style={styles.button}
-          onPress={handleChangePassword}
-        >
-          <Text style={styles.buttonText}>Change Password</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.requirements}>
-        <Text style={styles.requirementTitle}>Password Requirements</Text>
-        <Text style={styles.requirementText}>• Minimum 8 characters long</Text>
-        <Text style={styles.requirementText}>• At least one uppercase letter</Text>
-        <Text style={styles.requirementText}>• At least one lowercase letter</Text>
-        <Text style={styles.requirementText}>• At least one number</Text>
-        <Text style={styles.requirementText}>• At least one special character</Text>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 };
 

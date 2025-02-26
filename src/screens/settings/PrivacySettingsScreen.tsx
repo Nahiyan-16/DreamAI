@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Switch, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
+import SettingsHeader from '../../components/SettingsHeader';
 
 const PrivacySettingsScreen = () => {
   const { theme } = useTheme();
@@ -106,102 +107,105 @@ const PrivacySettingsScreen = () => {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Data Sharing</Text>
-        <View style={styles.option}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.optionText}>Share Dream Data</Text>
-            <Text style={styles.optionDescription}>
-              Allow your dream data to be used for research (anonymously)
-            </Text>
+    <View style={styles.container}>
+      <SettingsHeader destination="Settings" />
+      <ScrollView style={{ ...styles.container, paddingTop: 60 }}>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Data Sharing</Text>
+          <View style={styles.option}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.optionText}>Share Dream Data</Text>
+              <Text style={styles.optionDescription}>
+                Allow your dream data to be used for research (anonymously)
+              </Text>
+            </View>
+            <Switch
+              value={privacySettings.shareData}
+              onValueChange={() => toggleSetting('shareData')}
+              trackColor={{ false: '#767577', true: '#81b0ff' }}
+              thumbColor={privacySettings.shareData ? '#6A5ACD' : '#f4f3f4'}
+            />
           </View>
-          <Switch
-            value={privacySettings.shareData}
-            onValueChange={() => toggleSetting('shareData')}
-            trackColor={{ false: '#767577', true: '#81b0ff' }}
-            thumbColor={privacySettings.shareData ? '#6A5ACD' : '#f4f3f4'}
-          />
-        </View>
-        <View style={[styles.option, styles.lastOption]}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.optionText}>Anonymous Analytics</Text>
-            <Text style={styles.optionDescription}>
-              Help improve the app by sharing anonymous usage data
-            </Text>
+          <View style={[styles.option, styles.lastOption]}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.optionText}>Anonymous Analytics</Text>
+              <Text style={styles.optionDescription}>
+                Help improve the app by sharing anonymous usage data
+              </Text>
+            </View>
+            <Switch
+              value={privacySettings.anonymousAnalytics}
+              onValueChange={() => toggleSetting('anonymousAnalytics')}
+              trackColor={{ false: '#767577', true: '#81b0ff' }}
+              thumbColor={privacySettings.anonymousAnalytics ? '#6A5ACD' : '#f4f3f4'}
+            />
           </View>
-          <Switch
-            value={privacySettings.anonymousAnalytics}
-            onValueChange={() => toggleSetting('anonymousAnalytics')}
-            trackColor={{ false: '#767577', true: '#81b0ff' }}
-            thumbColor={privacySettings.anonymousAnalytics ? '#6A5ACD' : '#f4f3f4'}
-          />
         </View>
-      </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Personalization</Text>
-        <View style={styles.option}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.optionText}>Personalized Experience</Text>
-            <Text style={styles.optionDescription}>
-              Allow app to personalize your dream interpretations
-            </Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Personalization</Text>
+          <View style={styles.option}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.optionText}>Personalized Experience</Text>
+              <Text style={styles.optionDescription}>
+                Allow app to personalize your dream interpretations
+              </Text>
+            </View>
+            <Switch
+              value={privacySettings.personalization}
+              onValueChange={() => toggleSetting('personalization')}
+              trackColor={{ false: '#767577', true: '#81b0ff' }}
+              thumbColor={privacySettings.personalization ? '#6A5ACD' : '#f4f3f4'}
+            />
           </View>
-          <Switch
-            value={privacySettings.personalization}
-            onValueChange={() => toggleSetting('personalization')}
-            trackColor={{ false: '#767577', true: '#81b0ff' }}
-            thumbColor={privacySettings.personalization ? '#6A5ACD' : '#f4f3f4'}
-          />
-        </View>
-        <View style={[styles.option, styles.lastOption]}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.optionText}>Location Services</Text>
-            <Text style={styles.optionDescription}>
-              Use location data to enhance dream analysis
-            </Text>
+          <View style={[styles.option, styles.lastOption]}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.optionText}>Location Services</Text>
+              <Text style={styles.optionDescription}>
+                Use location data to enhance dream analysis
+              </Text>
+            </View>
+            <Switch
+              value={privacySettings.locationTracking}
+              onValueChange={() => toggleSetting('locationTracking')}
+              trackColor={{ false: '#767577', true: '#81b0ff' }}
+              thumbColor={privacySettings.locationTracking ? '#6A5ACD' : '#f4f3f4'}
+            />
           </View>
-          <Switch
-            value={privacySettings.locationTracking}
-            onValueChange={() => toggleSetting('locationTracking')}
-            trackColor={{ false: '#767577', true: '#81b0ff' }}
-            thumbColor={privacySettings.locationTracking ? '#6A5ACD' : '#f4f3f4'}
-          />
         </View>
-      </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Third-Party Integration</Text>
-        <View style={[styles.option, styles.lastOption]}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.optionText}>Third-Party Data Sharing</Text>
-            <Text style={styles.optionDescription}>
-              Allow sharing of data with trusted third-party services
-            </Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Third-Party Integration</Text>
+          <View style={[styles.option, styles.lastOption]}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.optionText}>Third-Party Data Sharing</Text>
+              <Text style={styles.optionDescription}>
+                Allow sharing of data with trusted third-party services
+              </Text>
+            </View>
+            <Switch
+              value={privacySettings.thirdPartySharing}
+              onValueChange={() => toggleSetting('thirdPartySharing')}
+              trackColor={{ false: '#767577', true: '#81b0ff' }}
+              thumbColor={privacySettings.thirdPartySharing ? '#6A5ACD' : '#f4f3f4'}
+            />
           </View>
-          <Switch
-            value={privacySettings.thirdPartySharing}
-            onValueChange={() => toggleSetting('thirdPartySharing')}
-            trackColor={{ false: '#767577', true: '#81b0ff' }}
-            thumbColor={privacySettings.thirdPartySharing ? '#6A5ACD' : '#f4f3f4'}
-          />
         </View>
-      </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Account Management</Text>
-        <TouchableOpacity 
-          style={styles.dangerButton}
-          onPress={handleDeleteAccount}
-        >
-          <Text style={styles.dangerButtonText}>Delete Account</Text>
-        </TouchableOpacity>
-        <Text style={styles.infoText}>
-          Deleting your account will permanently remove all your data and cannot be undone.
-        </Text>
-      </View>
-    </ScrollView>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Account Management</Text>
+          <TouchableOpacity 
+            style={styles.dangerButton}
+            onPress={handleDeleteAccount}
+          >
+            <Text style={styles.dangerButtonText}>Delete Account</Text>
+          </TouchableOpacity>
+          <Text style={styles.infoText}>
+            Deleting your account will permanently remove all your data and cannot be undone.
+          </Text>
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 

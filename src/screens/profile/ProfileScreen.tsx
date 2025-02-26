@@ -3,11 +3,17 @@ import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'rea
 import { useTheme } from '../../context/ThemeContext';
 import { useDreams } from '../../context/DreamsContext';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 const ProfileScreen = () => {
   const { theme } = useTheme();
   const isDarkMode = theme === 'dark';
   const { dreams } = useDreams();
+  
+  // Test user data
+  const isLoggedIn = true; // Simulating logged-in state
+  const userName = 'John Doe';
+  const userEmail = 'john.doe@example.com';
 
   // Calculate statistics
   const totalDreams = dreams.length;
@@ -17,6 +23,8 @@ const ProfileScreen = () => {
     return dreamDate.getMonth() === now.getMonth() && 
            dreamDate.getFullYear() === now.getFullYear();
   }).length;
+
+  const navigation = useNavigation();
 
   const styles = StyleSheet.create({
     container: {
@@ -130,7 +138,75 @@ const ProfileScreen = () => {
     lastRow: {
       borderBottomWidth: 0,
     },
+    loginContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 20,
+      backgroundColor: isDarkMode ? '#1a1a1a' : '#F8F8F8',
+    },
+    loginImage: {
+      width: 120,
+      height: 120,
+      marginBottom: 20,
+    },
+    loginTitle: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: isDarkMode ? '#FFFFFF' : '#333333',
+      marginBottom: 10,
+      textAlign: 'center',
+    },
+    loginText: {
+      fontSize: 16,
+      color: isDarkMode ? '#B0B0B0' : '#666666',
+      textAlign: 'center',
+      marginBottom: 30,
+    },
+    loginButton: {
+      backgroundColor: '#6A5ACD',
+      paddingVertical: 12,
+      paddingHorizontal: 30,
+      borderRadius: 25,
+      marginBottom: 15,
+    },
+    loginButtonText: {
+      color: '#FFFFFF',
+      fontSize: 18,
+      fontWeight: 'bold',
+    },
+    signupButton: {
+      paddingVertical: 12,
+      paddingHorizontal: 30,
+    },
+    signupButtonText: {
+      color: '#6A5ACD',
+      fontSize: 16,
+    },
   });
+
+  if (!isLoggedIn) {
+    return (
+      <View style={styles.loginContainer}>
+        <Text style={styles.loginTitle}>Welcome to Dream AI</Text>
+        <Text style={styles.loginText}>
+          Sign in to track your dreams, view statistics, and get personalized insights
+        </Text>
+        <TouchableOpacity 
+          style={styles.loginButton}
+          onPress={() => navigation.navigate('SignIn')}
+        >
+          <Text style={styles.loginButtonText}>Sign In</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.signupButton}
+          onPress={() => navigation.navigate('SignUp')}
+        >
+          <Text style={styles.signupButtonText}>Create Account</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -144,8 +220,8 @@ const ProfileScreen = () => {
             <Ionicons name="camera" size={20} color="#FFFFFF" />
           </TouchableOpacity>
         </View>
-        <Text style={styles.name}>John Doe</Text>
-        <Text style={styles.email}>john.doe@example.com</Text>
+        <Text style={styles.name}>{userName}</Text>
+        <Text style={styles.email}>{userEmail}</Text>
         
         <View style={styles.statsContainer}>
           <View style={styles.statBox}>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, StyleSheet, Modal, Alert } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, StyleSheet, Modal, Alert, KeyboardAvoidingView, Platform } from "react-native";
 import { OpenAI } from "openai";
 import { useFonts } from 'expo-font';
 import { ActivityIndicator } from "react-native";
@@ -9,13 +9,17 @@ import { useTheme } from './context/ThemeContext';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
 import { useDreams } from './context/DreamsContext';
+import { addDream as addDreamToServer } from './services/AuthService';
 
-interface Dream {
-  id: string;
+interface DreamData {
+  userId: string;
   date: Date;
   description: string;
   interpretation: string;
 }
+
+const isLoggedIn = false;
+const userName = 'John';
 
 const DreamInterpreter = () => {
   const { theme } = useTheme();
@@ -39,9 +43,12 @@ const DreamInterpreter = () => {
 
   const styles = StyleSheet.create({
     container: {
+      flex: 1,
+      backgroundColor: isDarkMode ? '#1a1a1a' : '#F8F8F8',
+    },
+    contentContainer: {
       flexGrow: 1,
       padding: 20,
-      backgroundColor: isDarkMode ? '#1a1a1a' : '#F8F8F8',
     },
     input: {
       borderWidth: 1,
@@ -153,6 +160,28 @@ const DreamInterpreter = () => {
       backgroundColor: '#808080',
       opacity: 0.7,
     },
+    header: {
+      alignItems: 'center',
+      marginBottom: 20,
+    },
+    logo: {
+      width: 100,
+      height: 100,
+      marginBottom: 15,
+    },
+    greeting: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: isDarkMode ? '#FFFFFF' : '#333333',
+      marginBottom: 8,
+      textAlign: 'center',
+    },
+    subtitle: {
+      fontSize: 16,
+      color: isDarkMode ? '#B0B0B0' : '#666666',
+      textAlign: 'center',
+      marginBottom: 20,
+    },
   });
 
   const analyzeDream = async () => {
@@ -164,50 +193,46 @@ const DreamInterpreter = () => {
     setLoading(true);
     setIsSaved(false);
 
-    // try {
-    //   const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
-    //   const response = await openai.chat.completions.create({
-    //     model: "gpt-4",
-    //     messages: [{ role: "system", content: "Analyze the following dream and provide an interpretation." }, { role: "user", content: dreamText }],
-    //   });
+    try {
+      const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
+      const response = await openai.chat.completions.create({
+        model: "gpt-4",
+        messages: [
+          { role: "system", content: "Analyze the following dream and provide an interpretation." },
+          { role: "user", content: dreamText }
+        ],
+      });
       
-    //   setInterpretation(response.choices[0]?.message?.content || "No interpretation available.");
-    // } catch (error) {
-    //   console.error("Error analyzing dream:", error);
-    //   setInterpretation("Failed to interpret the dream. Try again later.");
-    // }
-
-    setInterpretation("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
-
-    setLoading(false);
+      setInterpretation(response.choices[0]?.message?.content || "No interpretation available.");
+    } catch (error) {
+      console.error("Error analyzing dream:", error);
+      setInterpretation("Failed to interpret the dream. Try again later.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSaveDream = async () => {
     if (isSaved) {
-      Alert.alert(
-        'Already Saved',
-        'This dream interpretation has already been saved.'
-      );
+      Alert.alert('Already Saved', 'This dream interpretation has already been saved.');
       return;
     }
 
-    const dreamId = Date.now().toString();
-    
-    const dreamData: Dream = {
-      id: dreamId,
-      date: selectedDate,
-      description: dreamText,
-      interpretation: interpretation,
-    };
+    if (!isLoggedIn) {
+      Alert.alert('Sign In Required', 'Please sign in to save your dreams');
+      return;
+    }
 
     try {
-      await addDream(dreamData);
+      await addDreamToServer({
+        date: selectedDate,
+        description: dreamText,
+        interpretation: interpretation
+      });
+
       setIsSaved(true);
-      Alert.alert(
-        'Success',
-        'Dream saved successfully!',
-        [{ text: 'OK', onPress: () => setShowSaveModal(false) }]
-      );
+      setShowSaveModal(false);
+      Alert.alert('Success', 'Dream saved successfully!');
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert('Error', error.message);
@@ -226,119 +251,136 @@ const DreamInterpreter = () => {
 
   const handleShowSaveModal = () => {
     if (isSaved) {
-      Alert.alert(
-        'Already Saved',
-        'This dream interpretation has already been saved.'
-      );
+      Alert.alert('Already Saved', 'This dream interpretation has already been saved.');
       return;
     }
     setShowSaveModal(true);
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <TextInput
-        placeholder="Describe your dream..."
-        placeholderTextColor={isDarkMode ? '#808080' : '#666666'}
-        value={dreamText}
-        onChangeText={setDreamText}
-        multiline
-        style={styles.input}
-      />
-      
-      <TouchableOpacity
-        onPress={analyzeDream}
-        disabled={loading}
-        style={styles.button}
-      >
-        <Text style={styles.buttonText}>
-          {loading ? "Analyzing..." : "Interpret Dream"}
-        </Text>
-      </TouchableOpacity>
-      
-      {loading && (
-        <LottieView
-          source={require('../assets/animation.json')}
-          autoPlay
-          loop
-          style={{ width: 100, height: 100, alignSelf: 'center', marginTop: 20 }}
-        />
-      )}
-      
-      {interpretation && (
-        <View style={styles.interpretationContainer}>
-          <Text style={styles.interpretationTitle}>Interpretation:</Text>
-          <Text style={styles.interpretationText}>{interpretation}</Text>
-          
-          <TouchableOpacity 
-            style={[
-              styles.saveInterpretationButton,
-              isSaved && styles.savedButton
-            ]}
-            onPress={handleShowSaveModal}
-          >
-            <Text style={styles.buttonText}>
-              {isSaved ? 'Saved' : 'Save Interpretation'}
-            </Text>
-          </TouchableOpacity>
+    <KeyboardAvoidingView 
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <ScrollView contentContainerStyle={styles.contentContainer}>
+        <View style={styles.header}>
+          <Image
+            source={require('../assets/logo.png')}
+            style={styles.logo}
+          />
+          <Text style={styles.greeting}>
+            {isLoggedIn 
+              ? `Welcome back, ${userName}!`
+              : 'Welcome to Dream AI'}
+          </Text>
+          <Text style={styles.subtitle}>
+            Share your dream and get an AI interpretation
+          </Text>
         </View>
-      )}
 
-      <Modal
-        visible={showSaveModal}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setShowSaveModal(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Save Dream Interpretation</Text>
+        <TextInput
+          placeholder="Describe your dream..."
+          placeholderTextColor={isDarkMode ? '#808080' : '#666666'}
+          value={dreamText}
+          onChangeText={setDreamText}
+          multiline
+          style={styles.input}
+        />
+        
+        <TouchableOpacity
+          onPress={analyzeDream}
+          disabled={loading}
+          style={styles.button}
+        >
+          <Text style={styles.buttonText}>
+            {loading ? "Analyzing..." : "Interpret Dream"}
+          </Text>
+        </TouchableOpacity>
+        
+        {loading && (
+          <LottieView
+            source={require('../assets/animation.json')}
+            autoPlay
+            loop
+            style={{ width: 100, height: 100, alignSelf: 'center', marginTop: 20 }}
+          />
+        )}
+        
+        {interpretation && (
+          <View style={styles.interpretationContainer}>
+            <Text style={styles.interpretationTitle}>Interpretation:</Text>
+            <Text style={styles.interpretationText}>{interpretation}</Text>
             
             <TouchableOpacity 
-              style={styles.dateButton}
-              onPress={() => setShowDatePicker(true)}
+              style={[
+                styles.saveInterpretationButton,
+                isSaved && styles.savedButton
+              ]}
+              onPress={handleShowSaveModal}
             >
-              <Ionicons 
-                name="calendar" 
-                size={24} 
-                color={isDarkMode ? '#FFFFFF' : '#333333'} 
-              />
-              <Text style={styles.dateText}>
-                {selectedDate.toLocaleDateString()}
+              <Text style={styles.buttonText}>
+                {isSaved ? 'Saved' : 'Save Interpretation'}
               </Text>
             </TouchableOpacity>
+          </View>
+        )}
 
-            {showDatePicker && (
-              <DateTimePicker
-                value={selectedDate}
-                mode="date"
-                display="default"
-                onChange={handleDateChange}
-                maximumDate={new Date()}
-              />
-            )}
-
-            <View style={styles.modalButtonsContainer}>
-              <TouchableOpacity 
-                style={[styles.modalButton, styles.cancelButton]}
-                onPress={() => setShowSaveModal(false)}
-              >
-                <Text style={[styles.modalButtonText, styles.cancelButtonText]}>
-                  Cancel
-                </Text>
-              </TouchableOpacity>
+        <Modal
+          visible={showSaveModal}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setShowSaveModal(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Save Dream Interpretation</Text>
               
               <TouchableOpacity 
-                style={[styles.modalButton, styles.saveButton]}
-                onPress={handleSaveDream}
+                style={styles.dateButton}
+                onPress={() => setShowDatePicker(true)}
               >
-                <Text style={styles.modalButtonText}>Save</Text>
+                <Ionicons 
+                  name="calendar" 
+                  size={24} 
+                  color={isDarkMode ? '#FFFFFF' : '#333333'} 
+                />
+                <Text style={styles.dateText}>
+                  {selectedDate.toLocaleDateString()}
+                </Text>
               </TouchableOpacity>
+
+              {showDatePicker && (
+                <DateTimePicker
+                  value={selectedDate}
+                  mode="date"
+                  display="default"
+                  onChange={handleDateChange}
+                  maximumDate={new Date()}
+                />
+              )}
+
+              <View style={styles.modalButtonsContainer}>
+                <TouchableOpacity 
+                  style={[styles.modalButton, styles.cancelButton]}
+                  onPress={() => setShowSaveModal(false)}
+                >
+                  <Text style={[styles.modalButtonText, styles.cancelButtonText]}>
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                  style={[styles.modalButton, styles.saveButton]}
+                  onPress={handleSaveDream}
+                >
+                  <Text style={styles.modalButtonText}>Save</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
-      </Modal>
-    </ScrollView>
+        </Modal>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
